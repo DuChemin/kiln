@@ -1,0 +1,10 @@
+/* Du Chemin - music notation display */
+
+#startm {position:absolute; margin-left:5px;}
+
+div#labels {float:left; margin: 0; text-align:right;}
+p#firstspacer {height: 38px; margin:0;}
+p.label {height: 43px; margin: 0; font-family: roman, 'times new roman', times, serif;}
+p.spacer {height: 58px; margin: 0;}
+
+div#music {float: right; width:90%}
