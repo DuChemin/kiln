@@ -24,11 +24,11 @@ It provides an environment for rendering MusicXML files in an HTML5 canvas via t
 Code
 ----
 
-Kiln: https://github.com/kcl-ddh/kiln/
-MEItoVexFlow: https://github.com/raffazizzi/MEItoVexFlow/tree/experimental
-VexFlow: https://github.com/raffazizzi/vexflow/tree/experimental
+* Kiln: https://github.com/kcl-ddh/kiln/
+* MEItoVexFlow: https://github.com/raffazizzi/MEItoVexFlow/tree/experimental
+* VexFlow: https://github.com/raffazizzi/vexflow/tree/experimental
 
 Documentation
 -------------
 
-Kiln: http://kiln.readthedocs.org/en/latest/
+* Kiln: http://kiln.readthedocs.org/en/latest/
