@@ -53,7 +53,6 @@
         <xsl:variable name="width">
             <xsl:choose>
                 <xsl:when test="1+(number($endm)-number($startm)) &lt; 4">
-                    <!--<xsl:value-of select="1+(number($endm)-number($startm))*100 + 600"/>-->
                     <xsl:value-of select="1+(number($endm)-number($startm))*100 + 600"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -62,7 +61,7 @@
             </xsl:choose>
         </xsl:variable> 
         <xsl:variable name="height" select="max(//m:staff/@n)*100"/>
-        <xsl:message><xsl:value-of select="$height"/></xsl:message>
+        <!--<xsl:message><xsl:value-of select="$height"/></xsl:message>-->
         
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head><title>Du Chemin Project - <xsl:value-of select="//m:filedesc/m:titlestmt/m:title"/></title>
@@ -175,7 +174,7 @@
     
     <xsl:template match="m:section | m:ending" mode="meiNS">
         <xsl:choose>
-            <xsl:when test="descendant::m:measure[@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm))]">
+            <xsl:when test="descendant::m:measure[@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm)) or (number(substring-before(@n, 'a'))&gt;number($startm) and number(substring-before(@n, 'a'))&lt;number($endm))]">
                 <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
                     <xsl:sequence select="@*"/>
                     <xsl:apply-templates mode="meiNS"/>
@@ -187,7 +186,7 @@
     
     <xsl:template match="m:staffdef" name="staffdef" mode="meiNS">
         <xsl:param name="change" select="false()"/>
-        <xsl:message><xsl:value-of select="$change"/></xsl:message>
+        <!--<xsl:message><xsl:value-of select="$change"/></xsl:message>-->
         <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
             <xsl:sequence select="ancestor::m:scoredef/@* except (@xml:id, @key.sig)"/>
             <xsl:sequence select="@* except @clef.shape"/>
@@ -224,18 +223,9 @@
     
     <xsl:template match="m:measure" mode="meiNS">
         <xsl:choose>
-            <xsl:when test="@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm))">
+            <xsl:when test="@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm)) or (number(substring-before(@n, 'a'))&gt;number($startm) and number(substring-before(@n, 'a'))&lt;number($endm))">
                 <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
                     <xsl:sequence select="@*"/>
-                    <!--<xsl:attribute name="n">
-                        <xsl:choose>
-                            <xsl:when test="@n=$startm">1</xsl:when>
-                            <xsl:when test="@n=$endm"><xsl:value-of select="number($endm)-(number($startm)-1)"></xsl:value-of></xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="number(@n)-(number($startm)-1)"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>-->
                     <xsl:apply-templates mode="meiNS"/>
                 </xsl:element>
             </xsl:when>
