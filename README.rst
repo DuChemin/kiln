@@ -15,12 +15,20 @@ markup conventions. However, it has been adapted to work on a variety of
 flavours of TEI and other XML vocabularies, and has been used to publish data
 held in relational databases.
 
+Digital DuChemin Project
+------------------------
+
+This implementation of Kiln is extended with XSLT and JavaScript components for the Digital DuChemin project.
+It provides an environment for rendering MusicXML files in an HTML5 canvas via the MEI format. See links below for more details.
+
 Code
 ----
 
-https://github.com/kcl-ddh/kiln/
+Kiln: https://github.com/kcl-ddh/kiln/
+MEItoVexFlow: https://github.com/raffazizzi/MEItoVexFlow/tree/experimental
+VexFlow: https://github.com/raffazizzi/vexflow/tree/experimental
 
 Documentation
 -------------
 
-http://kiln.readthedocs.org/en/latest/
+Kiln: http://kiln.readthedocs.org/en/latest/
