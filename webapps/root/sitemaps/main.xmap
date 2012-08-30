@@ -18,7 +18,8 @@
       <!-- Mount a sitemap for any private URLs, such as editorial
            processes like Schematron validation. -->
       <map:match pattern="private/**">
-        <map:mount check-reload="yes" src="private.xmap" uri-prefix="private/" />
+        <map:mount check-reload="yes" src="private.xmap" uri-prefix="private/"
+         />
       </map:match>
     </map:pipeline>
 
@@ -41,12 +42,37 @@
         <!-- Redirect request to the root path to the index page. -->
         <map:redirect-to uri="index.html" />
       </map:match>
+      
+      <map:match pattern="index.html">
+        <map:aggregate element="aggregation" label="content">
+          <map:part src="cocoon://_internal/menu/main.xml" />
+          <map:part src="cocoon://_internal/metadata/files.xml"/>
+          <!--<map:part label="tei" src="cocoon://internal/tei/preprocess/index.xml"
+          />-->
+        </map:aggregate>
+        <map:transform src="cocoon://_internal/template/duchemin.xsl">
+          <map:parameter name="filedir" value="." />
+          <!--<map:parameter name="filename" value="index.xml" />-->
+          <map:parameter name="fileextension" value="html" />
+        </map:transform>
+        <map:serialize type="xhtml"/>
+      </map:match>
+      
+      <map:match pattern="music.html">      
+        <map:generate src="cocoon://music/musicxml2mei/{request-param:file}"/>
+        <map:transform type="saxon" src="../stylesheets/local/displayMeasures.xsl">
+          <map:parameter name="startm" value="{request-param:startm}" />
+          <map:parameter name="endm" value="{request-param:endm}" />
+        </map:transform>
+        <map:serialize />
+      </map:match>
 
       <map:match pattern="**.html">
         <map:aggregate element="aggregation" label="content">
           <map:part src="cocoon://_internal/menu/main.xml" />
-          <map:part src="cocoon://internal/metadata/files.xml" />
-          <map:part label="tei" src="cocoon://internal/tei/preprocess/{1}.xml" />
+          <!--<map:part src="cocoon://_internal/metadata/files.xml" />-->
+          <map:part label="tei" src="cocoon://internal/tei/preprocess/{1}.xml"
+           />
         </map:aggregate>
         <map:transform src="cocoon://_internal/template/tei.xsl">
           <map:parameter name="filedir" value="." />
@@ -54,6 +80,29 @@
           <map:parameter name="fileextension" value="html" />
         </map:transform>
         <map:serialize />
+      </map:match>
+    </map:pipeline>
+    
+    <!-- preprocessing -->
+    <map:pipeline>
+      <!-- 1. MusicXML cleanup -->
+      <map:match pattern="music/cleanup/**.xml">
+        <map:generate src="../content/xml/musicXML/{1}.xml"/>
+        <map:transform src="../stylesheets/local/cleanup.xsl" />
+        <map:serialize type="xml" />
+      </map:match>
+      <!-- 2. MusicXML partwise to timewise -->
+      <map:match pattern="music/musicxmlTW/**.xml">
+        <map:generate src="cocoon://music/cleanup/{1}.xml"/>
+        <map:transform src="../stylesheets/local/parttime.xsl" />
+        <map:serialize type="xml" />
+      </map:match>
+      <!-- 3. MusicXML timewise to MEI -->
+      <map:match pattern="music/musicxml2mei/**.xml">
+        <map:generate src="cocoon://music/musicxmlTW/{1}.xml"/>
+        <map:transform src="../stylesheets/local/musicxml2mei-2.2.3.xsl" />
+        <map:transform src="../stylesheets/local/post.xsl" />
+        <map:serialize type="xml" />
       </map:match>
     </map:pipeline>
 
@@ -67,33 +116,22 @@
         <map:serialize type="xml" />
       </map:match>
     </map:pipeline>
-
+    
     <!-- Metadata pipeline. -->
-    <map:pipeline id="metadata" internal-only="true">
-      <map:match pattern="internal/allxmlcontent.xml">
+    <map:pipeline id="kiln-metadata" internal-only="true">
+      <map:match pattern="_internal/allxmlcontent.xml">
         <map:generate src="../content/xml" type="directory">
           <map:parameter name="depth" value="99" />
           <map:parameter name="exclude" value="^\..*" />
         </map:generate>
         <map:serialize type="xml" />
       </map:match>
-
-      <map:match pattern="internal/metadata/*/**.xml">
-        <map:generate src="../content/xml/{2}.xml" />
-        <map:transform src="../stylesheets/metadata/{1}-metadata-generator.xsl">
-          <map:parameter name="path" value="{2}.xml" />
-        </map:transform>
-        <map:serialize type="xml" />
-      </map:match>
-
-      <map:match pattern="internal/metadata/*.xml">
-        <map:generate src="cocoon://internal/allxmlcontent.xml" />
-        <map:transform src="../stylesheets/metadata/xinclude.xsl">
-          <map:parameter name="type" value="{1}" />
-        </map:transform>
-        <map:transform type="xinclude" />
+      
+      <map:match pattern="_internal/metadata/files.xml">
+        <map:generate src="cocoon://_internal/allxmlcontent.xml" />
         <map:serialize type="xml" />
       </map:match>
     </map:pipeline>
+    
   </map:pipelines>
 </map:sitemap>
