@@ -1453,13 +1453,17 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
         <xsl:if test="@implicit='yes'">
           <xsl:attribute name="complete">i</xsl:attribute>
         </xsl:if>
-        <xsl:analyze-string select="normalize-space(@number)" regex="^([0-9]+)$">
+        <!-- DUCHEMIN - need alphanumeric measure numbers! -->
+        <xsl:attribute name="n">
+          <xsl:value-of select="@number"/>
+        </xsl:attribute>
+        <!--<xsl:analyze-string select="normalize-space(@number)" regex="^([0-9]+)$">
           <xsl:matching-substring>
             <xsl:attribute name="n">
               <xsl:value-of select="regex-group(1)"/>
             </xsl:attribute>
           </xsl:matching-substring>
-        </xsl:analyze-string>
+        </xsl:analyze-string>-->
         <xsl:attribute name="xml:id">
           <xsl:value-of select="generate-id()"/>
         </xsl:attribute>
