@@ -6,4 +6,3 @@ sw/jetty/temp
 webapps/sesame/app_dir
 webapps/solr/data
 webapps/root/WEB-INF/logs
-webapps/root/content/xml/musicXML/*
