@@ -43,16 +43,22 @@
         <map:redirect-to uri="index.html" />
       </map:match>
       
+      <map:match pattern="notation/**/*/*/">      
+        <map:generate src="cocoon://music/musicxml2mei/{1}"/>
+        <map:transform type="saxon" src="../stylesheets/local/musicJSON.xsl">
+          <map:parameter name="startm" value="{2}" />
+          <map:parameter name="endm" value="{3}" />
+        </map:transform>
+        <map:serialize type="text" />
+      </map:match>
+      
       <map:match pattern="index.html">
         <map:aggregate element="aggregation" label="content">
           <map:part src="cocoon://_internal/menu/main.xml" />
           <map:part src="cocoon://_internal/metadata/files.xml"/>
-          <!--<map:part label="tei" src="cocoon://internal/tei/preprocess/index.xml"
-          />-->
         </map:aggregate>
         <map:transform src="cocoon://_internal/template/duchemin.xsl">
           <map:parameter name="filedir" value="." />
-          <!--<map:parameter name="filename" value="index.xml" />-->
           <map:parameter name="fileextension" value="html" />
         </map:transform>
         <map:serialize type="xhtml"/>
@@ -60,7 +66,7 @@
       
       <map:match pattern="music.html">      
         <map:generate src="cocoon://music/musicxml2mei/{request-param:file}"/>
-        <map:transform type="saxon" src="../stylesheets/local/displayMeasures.xsl">
+        <map:transform type="saxon" src="../stylesheets/local/musicHTML.xsl">
           <map:parameter name="startm" value="{request-param:startm}" />
           <map:parameter name="endm" value="{request-param:endm}" />
         </map:transform>
@@ -70,7 +76,6 @@
       <map:match pattern="**.html">
         <map:aggregate element="aggregation" label="content">
           <map:part src="cocoon://_internal/menu/main.xml" />
-          <!--<map:part src="cocoon://_internal/metadata/files.xml" />-->
           <map:part label="tei" src="cocoon://internal/tei/preprocess/{1}.xml"
            />
         </map:aggregate>
