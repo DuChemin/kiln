@@ -45,7 +45,7 @@ Recent changes:
   <xsl:param name="ns-decl"             select="'xmlns'"/>
   <xsl:param name="colon"               select="':'"/>
   <xsl:param name="equals"              select="'='"/>
-  <xsl:param name="attribute-delimiter" select="'&quot;'"/>
+  <xsl:param name="attribute-delimiter" select="'\&quot;'"/>
   <xsl:param name="comment-start"       select="'&lt;!--'"/>
   <xsl:param name="comment-end"         select="'-->'"/>
   <xsl:param name="pi-start"            select="'&lt;?'"/>
