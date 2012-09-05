@@ -43,13 +43,13 @@
         <map:redirect-to uri="index.html" />
       </map:match>
       
-      <map:match pattern="notation/**/*/*/">      
+      <map:match pattern="notation/**/*/*">      
         <map:generate src="cocoon://music/musicxml2mei/{1}"/>
         <map:transform type="saxon" src="../stylesheets/local/musicJSON.xsl">
           <map:parameter name="startm" value="{2}" />
           <map:parameter name="endm" value="{3}" />
         </map:transform>
-        <map:serialize type="text" />
+        <map:serialize type="text" mime-type="application/json" />
       </map:match>
       
       <map:match pattern="index.html">
