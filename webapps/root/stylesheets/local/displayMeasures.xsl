@@ -9,22 +9,23 @@
     <xsl:import href="../defaults.xsl"/>
     <xsl:import href="id2ts.xsl"/>
     
-    <xd:doc scope="stylesheet">
-        <xd:desc>
-            <xd:p><xd:b>Created on:</xd:b> Dec 1, 2011</xd:p>
-            <xd:p><xd:b>Author:</xd:b> rviglianti</xd:p>
-            <xd:p>Resolves mrpts into choice/orig/reg.</xd:p>
-            <xd:p>Display measures using vexflow</xd:p>
-        </xd:desc>
-    </xd:doc>
+    <xsl:param name="startm"/>
+    <xsl:param name="endm"/>
     
-    <!-- IMPORTANT TODO: This needs to get the closest scoredef to the first measure requested, 
-        otherwise it will always show tehe very first one. Example: DC0118.xml mm 28 - 34 should have
-        3/1 not 4/2 -->
+    <!-- Core components for getting range of MEI measures -->
+    <!-- Author: Raffaele Viglianti -->
     
-    
-    <xsl:param name="startm" select="'1'"/>
-    <xsl:param name="endm" select="'4'"/>
+    <xsl:variable name="width">
+        <xsl:choose>
+            <xsl:when test="1+(number($endm)-number($startm)) &lt; 4">
+                <xsl:value-of select="1+(number($endm)-number($startm))*100 + 600"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="1+(number($endm)-number($startm))*300"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable> 
+    <xsl:variable name="height" select="max(//m:staff/@n)*100"/>
     
     <xsl:template name="getKey">
         <xsl:param name="sig"/>
@@ -46,66 +47,6 @@
                 <meifn:accid/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:template>
-    
-    <xsl:template match="/">
-        
-        <xsl:variable name="width">
-            <xsl:choose>
-                <xsl:when test="1+(number($endm)-number($startm)) &lt; 4">
-                    <xsl:value-of select="1+(number($endm)-number($startm))*100 + 600"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="1+(number($endm)-number($startm))*300"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable> 
-        <xsl:variable name="height" select="max(//m:staff/@n)*100"/>
-        <!--<xsl:message><xsl:value-of select="$height"/></xsl:message>-->
-        
-        <html xmlns="http://www.w3.org/1999/xhtml">
-            <head><title>Du Chemin Project - <xsl:value-of select="//m:filedesc/m:titlestmt/m:title"/></title>
-                
-                <link type="text/css" rel="stylesheet" href="{$xmg:context-path}{$xmg:assets-url}/styles/music.css"/>
-                
-                <script type="text/JavaScript" src="{$xmg:context-path}{$xmg:assets-url}/scripts/libs/jquery.min.js"></script>
-                <script type="text/JavaScript" src="{$xmg:context-path}{$xmg:assets-url}/scripts/libs/vexflow-free.js"> </script>
-                <script type="text/JavaScript" src="{$xmg:context-path}{$xmg:assets-url}/scripts/libs/meitovexflow.js"> </script>
-            </head>
-            <body>
-                <div class="MEItoVexFlow">
-                    <div id="labels">
-                        <p id="firstspacer"> </p>
-                        <xsl:for-each select="//m:scoredef//m:staffdef">
-                            <p class="label"><xsl:value-of select="@label.full"/></p>
-                            <p class="spacer"> </p>
-                        </xsl:for-each>
-                    </div>
-                    <div id="music">
-                        <span id="startm"><xsl:value-of select="$startm"/></span>
-                        <span id="cv"><canvas width="{$width + 50}" height="{$height + 50}" style="border: none"/></span> 
-                        <xsl:apply-templates select="//m:score" mode="meiNS"/>
-                        
-                        <script type="text/JavaScript">
-                            <xsl:text>var MEI = $('#meiScore');var canvas = $("div#music canvas")[0];</xsl:text>
-                            <xsl:text>render_notation(MEI, canvas,</xsl:text> 
-                            <xsl:value-of select="$width"/>,<xsl:value-of select="$height"/>
-                            <xsl:text>);</xsl:text>
-                            
-                            <!--<xsl:text>$(MEI).find('mei\\:staff[n="2"]').detach();</xsl:text> 
-                            
-                            <xsl:text>var context = canvas.getContext("2d");context.save();context.setTransform(1, 0, 0, 1, 0, 0);</xsl:text>
-                            <xsl:text>context.clearRect(0, 0, canvas.width, canvas.height);context.restore();</xsl:text>
-                            
-                            <xsl:text>render_notation(MEI, canvas,</xsl:text>
-                            <xsl:value-of select="$width"/>,<xsl:value-of select="$height"/>
-                            <xsl:text>);</xsl:text>-->
-                        </script>
-                        
-                    </div>
-                </div>
-            </body>
-        </html>
     </xsl:template>
     
     <xsl:template match="@*|node()[not(self::*)]" mode="meiNS">
