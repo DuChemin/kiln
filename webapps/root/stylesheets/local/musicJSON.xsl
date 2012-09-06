@@ -22,7 +22,7 @@
 <xsl:text xml:space="preserve">
 {
     "music": "</xsl:text><xsl:for-each select="$data"><xsl:call-template name="xml-to-string"/></xsl:for-each><xsl:text xml:space="preserve">",
-    "dimensions": [</xsl:text><xsl:value-of select="$width"/><xsl:text xml:space="preserve">,</xsl:text><xsl:value-of select="$height"/><xsl:text>],
+    "dimensions": [</xsl:text><xsl:value-of select="$width"/><xsl:text xml:space="preserve">,</xsl:text><xsl:value-of select="$height"/><xsl:text>]
 }
 </xsl:text>
         
