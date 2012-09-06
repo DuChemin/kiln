@@ -12,7 +12,7 @@ Redistribution and use in source and binary forms, with or without modification,
 
 Recent changes:
 
-2010-09-05: RV switched to XSLT 2.0; added escape character to apostrophes.
+2010-09-05: RV switched to XSLT 2.0; added escape character to quotes.
 2010-09-04: Raffaele Viglianti commented out root-matching template; changed encoding.
 
 2010-06-10: Added the $force-exclude-all-namespaces parameter
@@ -289,15 +289,15 @@ Recent changes:
         <xsl:with-param name="with" select="'&amp;lt;'"/>
       </xsl:call-template>
     </xsl:variable>
-    <xsl:variable name="aposEscaped">
+    <xsl:variable name="quoteEscaped">
       <xsl:call-template name="replace-string">
         <xsl:with-param name="text" select="$ltEscaped"/>
-        <xsl:with-param name="replace" select="''''"/>
-        <xsl:with-param name="with" select="'\'''"/>
+        <xsl:with-param name="replace" select='""""'/>
+        <xsl:with-param name="with" select='"\"""'/>
       </xsl:call-template>
     </xsl:variable>
     <xsl:call-template name="replace-string">
-      <xsl:with-param name="text" select="$aposEscaped"/>
+      <xsl:with-param name="text" select="$quoteEscaped"/>
       <xsl:with-param name="replace" select="']]>'"/>
       <xsl:with-param name="with" select="']]&amp;gt;'"/>
     </xsl:call-template>
