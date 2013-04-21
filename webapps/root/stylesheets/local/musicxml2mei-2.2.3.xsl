@@ -33,8 +33,8 @@
 <!DOCTYPE xsl:stylesheet [
 <!ENTITY startbeam      "&#xE501;">
 <!ENTITY endbeam        "&#xE502;">
-<!ENTITY % MusicChars SYSTEM
-   'http://text.lib.virginia.edu/charent/musicchar.ent'> %MusicChars;
+<!--<!ENTITY % MusicChars SYSTEM
+   'http://text.lib.virginia.edu/charent/musicchar.ent'> %MusicChars;-->
 ]>
 
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -379,7 +379,7 @@
               <xsl:for-each-group select="measure"
                 group-ending-with="measure[part/barline/repeat[@direction='backward'] or 
 following-sibling::measure[1][part/barline[@location='left']/repeat[@direction='forward']] or 
-part/barline/ending[@type='stop'] or 
+part/barline/ending[@type=('stop', 'discontinue')] or 
 part/barline[@location='right']/bar-style='light-light' or 
 following-sibling::measure[1][part/barline/ending[@type='start']] or 
 following-sibling::measure[1][part/attributes[time or key]]
