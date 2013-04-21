@@ -115,7 +115,7 @@
     
     <xsl:template match="m:section | m:ending" mode="meiNS">
         <xsl:choose>
-            <xsl:when test="descendant::m:measure[@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm)) or (number(substring-before(@n, 'a'))&gt;number($startm) and number(substring-before(@n, 'a'))&lt;number($endm))]">
+            <xsl:when test="descendant::m:measure[@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm)) or (number(substring-before(@n, 'a'))&gt;=number($startm) and number(substring-before(@n, 'a'))&lt;=number($endm))]">
                 <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
                     <xsl:sequence select="@*"/>
                     <xsl:apply-templates mode="meiNS"/>
@@ -164,7 +164,7 @@
     
     <xsl:template match="m:measure" mode="meiNS">
         <xsl:choose>
-            <xsl:when test="@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm)) or (number(substring-before(@n, 'a'))&gt;number($startm) and number(substring-before(@n, 'a'))&lt;number($endm))">
+            <xsl:when test="@n=$startm or @n=$endm or (number(@n)&gt;number($startm) and number(@n)&lt;number($endm)) or (number(substring-before(@n, 'a'))&gt;=number($startm) and number(substring-before(@n, 'a'))&lt;=number($endm))">
                 <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
                     <xsl:sequence select="@*"/>
                     <xsl:apply-templates mode="meiNS"/>
