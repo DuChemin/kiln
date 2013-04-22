@@ -76,6 +76,10 @@
                     <xsl:when test="sum($m/descendant::*[duration]/duration) &lt; $mtot">
                         <xsl:value-of select="true()"/>
                     </xsl:when>
+                    <!-- Is this a second volta? Is the previous measure 2/2? -->
+                    <xsl:when test="$m/descendant::ending[@type=('discontinue','test') and @number='2']">
+                        <xsl:value-of select="true()"/>
+                    </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="false()"/>
                     </xsl:otherwise>
@@ -137,7 +141,6 @@
         <xsl:attribute name="number">
             <xsl:choose>
                 <xsl:when test="dc:is_rpt(parent::measure) = true()">
-                    <xsl:message>4here</xsl:message>
                     <xsl:value-of select="count(parent::measure/preceding::measure[ancestor::part[@id=$part_id]])-1"/>
                     <xsl:text>a</xsl:text>
                 </xsl:when>
