@@ -8,21 +8,25 @@
     <!-- Sibelius MusicXML export "cleanup" for DuChemin -->
     
     <xsl:template name="start">
-        <xsl:apply-templates select="/" mode="inc"/>
+        <xsl:apply-templates select="/" mode="cut"/>
     </xsl:template>
     
-    <!-- Pass inc: Cleanup incipit; Preserve Cut C -->
-    <xsl:variable name="inc">
+    <!-- Pass cut: Cleanup incipit; Preserve Cut C -->
+    <xsl:variable name="cut">
         <xsl:call-template name="start"/>
     </xsl:variable>    
+    <!-- Pass inc: Renumber all measures -->
+    <xsl:variable name="inc">
+        <xsl:apply-templates select="$cut" mode="inc"/>
+    </xsl:variable>
     <!-- Pass mnum: Renumber all measures -->
     <xsl:variable name="mnum">
         <xsl:apply-templates select="$inc" mode="mnum"/>
     </xsl:variable>
     <!-- Pass rpt: Finds "middle of measure" repeats and sets the same numer for two measures -->
-    <xsl:variable name="rpt">
+    <!--<xsl:variable name="rpt">
         <xsl:apply-templates select="$mnum" mode="rpt"/>
-    </xsl:variable>
+    </xsl:variable>-->
     <!-- Output -->
     <xsl:template match="/">
         <xsl:sequence select="$mnum"/>
@@ -91,6 +95,38 @@
         </xsl:choose>
     </xsl:function>
     
+    <!-- Templates for pass: cut -->
+    <xsl:template match="*" mode="cut">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates mode="cut"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="text()|comment()|processing-instruction()" mode="cut">
+        <xsl:sequence select="."/>
+    </xsl:template>
+    
+    <!-- Preserve Cut C --> 
+    <xsl:template match="time[@symbol='cut'] | measure[1][following-sibling::measure//time[@symbol='cut']]//time" mode="cut">
+        <time>
+            <xsl:sequence select="@*"/>
+            <xsl:for-each select="*">
+                <xsl:choose>
+                    <xsl:when test="self::beats">
+                        <beats>4</beats>
+                    </xsl:when>
+                    <xsl:when test="self::beat-type">
+                        <beat-type>2</beat-type>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="." mode="cut"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+        </time>
+    </xsl:template>
+    
     <!-- Templates for pass: inc -->
     <xsl:template match="*" mode="inc">
         <xsl:copy>
@@ -103,24 +139,22 @@
         <xsl:sequence select="."/>
     </xsl:template>
     
-    <!-- Preserve Cut C --> 
-    <xsl:template match="time[@symbol='cut'] | measure[1][following-sibling::measure//time[@symbol='cut']]//time" mode="inc">
-        <time>
-            <xsl:sequence select="@*"/>
-            <xsl:for-each select="*">
-                <xsl:choose>
-                    <xsl:when test="self::beats">
-                        <beats>4</beats>
-                    </xsl:when>
-                    <xsl:when test="self::beat-type">
-                        <beat-type>2</beat-type>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:apply-templates select="." mode="inc"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:for-each>
-        </time>
+    <xsl:template match="measure[@number='1']" mode="inc">
+        <xsl:variable name="part_id" select="ancestor::part[1]/@id"/>
+        <xsl:choose>
+            <xsl:when test="following::measure[@number='1'][ancestor::part[@id=$part_id]]"></xsl:when>
+            <xsl:when test="preceding::measure[@number='1'][ancestor::part[@id=$part_id]]"></xsl:when>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:apply-templates mode="inc"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates mode="inc"/>
+        </xsl:copy>
     </xsl:template>
     
     <!-- Templates for pass: mnum, rpt -->
@@ -141,7 +175,7 @@
         <xsl:attribute name="number">
             <xsl:choose>
                 <xsl:when test="dc:is_rpt(parent::measure) = true()">
-                    <xsl:value-of select="count(parent::measure/preceding::measure[ancestor::part[@id=$part_id]])-1"/>
+                    <xsl:value-of select="count(parent::measure/preceding::measure[ancestor::part[@id=$part_id]][dc:is_rpt(.) = false()])-1"/>
                     <xsl:text>a</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
