@@ -142,13 +142,15 @@
     <xsl:template match="measure[@number='1']" mode="inc">
         <xsl:variable name="part_id" select="ancestor::part[1]/@id"/>
         <xsl:choose>
-            <xsl:when test="following::measure[@number='1'][ancestor::part[@id=$part_id]]"></xsl:when>
-            <xsl:when test="preceding::measure[@number='1'][ancestor::part[@id=$part_id]]"></xsl:when>
+            <xsl:when test="following::measure[@number='1'][ancestor::part[@id=$part_id]]"/>
+            <xsl:when test="preceding::measure[@number='1'][ancestor::part[@id=$part_id]]"/>
             <xsl:otherwise>
-                <xsl:copy>
+               <xsl:if test="descendant::text">
+                   <xsl:copy>
                     <xsl:copy-of select="@*"/>
                     <xsl:apply-templates mode="inc"/>
                 </xsl:copy>
+               </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:copy>
