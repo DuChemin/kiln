@@ -11,17 +11,13 @@
         <xsl:apply-templates select="/" mode="cut"/>
     </xsl:template>
     
-    <!-- Pass cut: Cleanup incipit; Preserve Cut C -->
+    <!-- Pass cut: Preserve Cut C -->
     <xsl:variable name="cut">
         <xsl:call-template name="start"/>
-    </xsl:variable>    
-    <!-- Pass inc: Renumber all measures -->
-    <xsl:variable name="inc">
-        <xsl:apply-templates select="$cut" mode="inc"/>
-    </xsl:variable>
+    </xsl:variable> 
     <!-- Pass mnum: Renumber all measures -->
     <xsl:variable name="mnum">
-        <xsl:apply-templates select="$inc" mode="mnum"/>
+        <xsl:apply-templates select="$cut" mode="mnum"/>
     </xsl:variable>
     <!-- Pass rpt: Finds "middle of measure" repeats and sets the same numer for two measures -->
     <!--<xsl:variable name="rpt">
@@ -127,37 +123,7 @@
         </time>
     </xsl:template>
     
-    <!-- Templates for pass: inc -->
-    <xsl:template match="*" mode="inc">
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="inc"/>
-        </xsl:copy>
-    </xsl:template>
     
-    <xsl:template match="text()|comment()|processing-instruction()" mode="inc">
-        <xsl:sequence select="."/>
-    </xsl:template>
-    
-    <xsl:template match="measure[@number='1']" mode="inc">
-        <xsl:variable name="part_id" select="ancestor::part[1]/@id"/>
-        <xsl:choose>
-            <xsl:when test="following::measure[@number='1'][ancestor::part[@id=$part_id]]"/>
-            <xsl:when test="preceding::measure[@number='1'][ancestor::part[@id=$part_id]]"/>
-            <xsl:otherwise>
-               <xsl:if test="descendant::text">
-                   <xsl:copy>
-                    <xsl:copy-of select="@*"/>
-                    <xsl:apply-templates mode="inc"/>
-                </xsl:copy>
-               </xsl:if>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="inc"/>
-        </xsl:copy>
-    </xsl:template>
     
     <!-- Templates for pass: mnum, rpt -->
     <xsl:template match="*" mode="mnum">
