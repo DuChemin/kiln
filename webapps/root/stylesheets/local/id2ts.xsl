@@ -31,7 +31,7 @@
         <xsl:for-each select="$context">
             <xsl:variable name="base" select="preceding::m:scoredef[@meter.unit][1]/@meter.unit"/>
             <xsl:variable name="events">
-                <xsl:for-each select="descendant::m:note | descendant::m:rest">
+                <xsl:for-each select="descendant::m:note | descendant::m:rest | descendant::m:chord">
                     <!-- Other events that should be considered? -->
                     <meifn:event>
                         <xsl:copy-of select="@xml:id"/>
@@ -66,8 +66,6 @@
                 <xsl:with-param name="ts" select="$ts"/>
                 <xsl:with-param name="base" select="$base"/>
             </xsl:call-template>
-            
-            
         </xsl:for-each>
     </xsl:function>
     
