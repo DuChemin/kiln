@@ -64,11 +64,11 @@
         <map:serialize type="xhtml"/>
       </map:match>
       
-      <map:match pattern="music.html">      
-        <map:generate src="cocoon://music/musicxml2mei/{request-param:file}"/>
+      <map:match pattern="music/*/*/*/*">      
+        <map:generate src="cocoon://music/musicxml2mei/{1}_XML%2F{1}{2}.xml"/>
         <map:transform type="saxon" src="../stylesheets/local/musicHTML.xsl">
-          <map:parameter name="startm" value="{request-param:startm}" />
-          <map:parameter name="endm" value="{request-param:endm}" />
+          <map:parameter name="startm" value="{3}" />
+          <map:parameter name="endm" value="{4}" />
         </map:transform>
         <map:serialize />
       </map:match>
