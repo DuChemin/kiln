@@ -15,6 +15,10 @@
     <!-- Core components for getting range of MEI measures -->
     <!-- Author: Raffaele Viglianti -->
     
+    <xsl:template match="/">
+        <xsl:apply-templates select="//m:score" mode="meiNS"/>
+    </xsl:template>
+    
     <xsl:variable name="width">
         <xsl:choose>
             <xsl:when test="1+(number($endm)-number($startm)) &lt; 4">
