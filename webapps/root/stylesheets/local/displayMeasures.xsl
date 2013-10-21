@@ -74,13 +74,14 @@
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="m:score/m:scoredef" mode="meiNS">
+    <xsl:template match="m:score/m:scoredef | m:score/m:scoreDef" mode="meiNS">
         <!-- If there's a change in the section of the first measure, update the initial scoredef -->
         <xsl:choose>
-            <xsl:when test="//m:measure[@n=$startm]/preceding::m:scoredef[parent::m:section][1]">
+            <xsl:when test="//m:measure[@n=$startm]/preceding::m:scoredef[parent::m:section][1] or //m:measure[@n=$startm]/preceding::m:scoreDef[parent::m:section][1]">
                 <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
                     <xsl:sequence select="@* except @xml:id"/>
                     <xsl:sequence select="//m:measure[@n=$startm]/preceding::m:scoredef[parent::m:section][1]/@*"/>
+                    <xsl:sequence select="//m:measure[@n=$startm]/preceding::m:scoreDef[parent::m:section][1]/@*"/>
                     <xsl:for-each select="*">
                         <xsl:choose>
                             <xsl:when test="self::m:staffgrp">
@@ -88,7 +89,7 @@
                                     <xsl:sequence select="@*"/>
                                     <xsl:for-each select="*">
                                         <xsl:choose>
-                                            <xsl:when test="self::m:staffdef">
+                                            <xsl:when test="self::m:staffdef or self::m:staffDef">
                                                 <xsl:call-template name="staffdef">
                                                     <xsl:with-param name="change" select="true()"/>
                                                 </xsl:call-template>
@@ -129,14 +130,16 @@
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template match="m:staffdef" name="staffdef" mode="meiNS">
+    <xsl:template match="m:staffdef | m:staffDef" name="staffdef" mode="meiNS">
         <xsl:param name="change" select="false()"/>
         <!--<xsl:message><xsl:value-of select="$change"/></xsl:message>-->
         <xsl:element name="mei:{name()}" namespace="http://www.music-encoding.org/ns/mei">
             <xsl:sequence select="ancestor::m:scoredef/@* except (@xml:id, @key.sig)"/>
+            <xsl:sequence select="ancestor::m:scoreDef/@* except (@xml:id, @key.sig)"/>
             <xsl:sequence select="@* except @clef.shape"/>
             <xsl:if test="$change">
                 <xsl:sequence select="//m:measure[@n=$startm]/preceding::m:scoredef[parent::m:section][1]/@*"/>
+                <xsl:sequence select="//m:measure[@n=$startm]/preceding::m:scoreDef[parent::m:section][1]/@*"/>
             </xsl:if>
             <xsl:choose>
                 <xsl:when test="@clef.shape != 'C' or (@clef.shape='C' and @clef.line!='4')">
@@ -229,6 +232,8 @@
             <xsl:apply-templates mode="meiNS"/>
         </xsl:element>
     </xsl:template>
+    
+    <xsl:template match="m:annot" mode="meiNS"/>
     
 </xsl:stylesheet>
 
